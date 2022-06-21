@@ -25,9 +25,18 @@ namespace TcpShared
         public const String PayLoadEnd = "</Payload>";
         public const String MessageStart = "<ClientMessage>";
         public const String MessageEnd = "</ClientMessage>";
+
         public String ClientId { get; set; }
         public String PayLoad { get; set; }
-
+        public byte[] Create(String message)
+        {
+            byte[] buffer = new byte[message.Length + MessageTemplate.Length];
+            ClientIdentifier ci = new ClientIdentifier();
+            ClientId = ci.Id;
+            PayLoad = message;
+            String fullMessage = $"{MessageStart}{ClientIdentifierStart}{ci.Id}{ClientIdentifierEnd}{PayLoadStart}{message}{PayLoadEnd}{MessageEnd}";
+            return System.Text.Encoding.UTF8.GetBytes(fullMessage);
+        }
         public bool Parse(ClientState clientState)
         {
             bool result = false;
@@ -36,6 +45,8 @@ namespace TcpShared
             int endMessageIdx = -1;
             try
             {
+                clientState.ReceiveData();
+
                 String message = clientState.Message;
 
                 startMessageIdx = message.IndexOf(MessageStart);
@@ -62,7 +73,6 @@ namespace TcpShared
         }
         public bool HasClientId => String.IsNullOrWhiteSpace(ClientId) == false;
         public bool HasPayLoad => String.IsNullOrWhiteSpace(PayLoad) == false;
-
     }
 
 }

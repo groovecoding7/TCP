@@ -14,11 +14,15 @@ namespace TcpShared
         }
         public void Reply()
         {
-           ClientState.SendData(AckMessage);
+            ClientMessage cm = new ClientMessage();
+            
+            ClientState.SendData(cm.Create(AckMessage));
         }
         public void Send(String message)
         {
-            ClientState.SendData(message);
+            ClientMessage cm = new ClientMessage();
+
+            ClientState.SendData(cm.Create(message));
         }
     }
 }
