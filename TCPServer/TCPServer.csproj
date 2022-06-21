@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TcpShared\TcpShared.csproj" />
+    <ProjectReference Include="..\TCPShared\TCPShared.csproj" />
   </ItemGroup>
 
 </Project>
