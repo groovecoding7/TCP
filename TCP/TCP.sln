@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TCPClient", "..\TCPClient\T
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TCPServer", "..\TCPServer\TCPServer.csproj", "{7D25D3B6-F476-419E-A5DF-F779493D94A6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TcpShared", "..\TCPShared\TcpShared.csproj", "{292961F0-D9A2-49A1-9C2C-38812F8768A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TCPShared", "..\TCPShared\TCPShared.csproj", "{292961F0-D9A2-49A1-9C2C-38812F8768A0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

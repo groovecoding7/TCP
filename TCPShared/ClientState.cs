@@ -32,7 +32,7 @@ namespace TcpShared
                 if (read > 0)
                 {
                     offset += read;
-                    WorkingBuffer.Append(Encoding.UTF8.GetString(buffer, 0, read));
+                    WorkingBuffer.Append(Encoding.UTF8.GetString(buffer, offset, read));
                 }
 
             } while (read>0);
