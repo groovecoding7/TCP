@@ -70,7 +70,7 @@ namespace TcpShared
                     }
                     else
                     {
-                        ClientIdentifier clientIdentifier = new ClientIdentifier();
+                        ClientIdentifier clientIdentifier = new ClientIdentifier(cm.ClientId);
                         ClientInformation ci = new ClientInformation(clientIdentifier, message);
                         Connections.Add(clientIdentifier.Id, ci);
                         ci.Reply();

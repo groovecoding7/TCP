@@ -12,6 +12,10 @@ namespace TcpShared
         public ClientIdentifier()
         {
             Id = new Guid().ToString();
+        }
+        public ClientIdentifier(String clientIdentifier)
+        {
+            Id = clientIdentifier;
 
         }
     }

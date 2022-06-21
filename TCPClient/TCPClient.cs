@@ -18,6 +18,7 @@ namespace TCPClient
         private ManualResetEvent wSendManualResetEvent = new ManualResetEvent(false);
         private ManualResetEvent wReceiveManualResetEvent = new ManualResetEvent(false);
 
+        public const String Message = "This is my message to you.";
         public TcpClientHandler(string hostName1, int portNum1)
         {
             HostName = hostName1;
@@ -52,10 +53,11 @@ namespace TCPClient
 
                 ClientMessage sm = new ClientMessage();
 
-                buffer = sm.Create("This is my message to you.");
+                buffer = sm.Create(Message);
 
                 for (int messageIdx = 0; messageIdx < 1000000; messageIdx++)
                 {
+                    Console.WriteLine($"Sending a Message to Server: {Message}");
                     cs.SendData(buffer);
                     ClientMessage cm = null;
                     do

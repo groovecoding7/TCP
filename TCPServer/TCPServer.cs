@@ -13,9 +13,6 @@ namespace TCPServer
 
     public class TcpServerHandler
     {
-
-       
-
         private ManualResetEvent wManualResetEvent = new ManualResetEvent(false);
 
         public TcpServerHandler(string hostName1, int portNum1)
