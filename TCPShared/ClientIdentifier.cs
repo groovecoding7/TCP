@@ -11,7 +11,7 @@ namespace TcpShared
         public string Id { get; set; }
         public ClientIdentifier()
         {
-            Id = new Guid().ToString();
+            Id = Guid.NewGuid().ToString();
         }
         public ClientIdentifier(String clientIdentifier)
         {

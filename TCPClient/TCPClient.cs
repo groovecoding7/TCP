@@ -15,10 +15,9 @@ namespace TCPClient
             new Dictionary<String, ClientInformation>();
 
         private ManualResetEvent wConnectManualResetEvent = new ManualResetEvent(false);
-        private ManualResetEvent wSendManualResetEvent = new ManualResetEvent(false);
         private ManualResetEvent wReceiveManualResetEvent = new ManualResetEvent(false);
+        private ManualResetEvent wSendManualResetEvent = new ManualResetEvent(false);
 
-        public const String Message = "This is my message to you.";
         public TcpClientHandler(string hostName1, int portNum1)
         {
             HostName = hostName1;
@@ -43,38 +42,41 @@ namespace TCPClient
                 PortNum = 11000;
             }
 
+            Thread.Sleep(3000);
+
             try 
             {
                 var client = new TcpClient(HostName, PortNum);
 
-                ClientState cs = new ClientState(client);
-
-                byte[] buffer = new byte[ClientState.BufferSize];
-
-                ClientMessage sm = new ClientMessage();
-
-                buffer = sm.Create(Message);
-
                 for (int messageIdx = 0; messageIdx < 1000000; messageIdx++)
                 {
-                    Console.WriteLine($"Sending a Message to Server: {Message}");
+                    String message  = $"This is message # {messageIdx}.";
+
+                    MessageState cs = new MessageState(client);
+
+                    byte[] buffer = new byte[MessageState.BufferSize];
+
+                    Message sm = new Message();
+
+                    buffer = sm.Create(message);
+
+                    Console.WriteLine($"Sending message # {messageIdx} to the server: {message}");
+
                     cs.SendData(buffer);
-                    ClientMessage cm = null;
+
+                    Message cm = null;
                     do
                     {
-                        cm = cs.ReceiveData();
+                        cm = cs.ClientReceiveData();
                         if (cm != null)
                         {
                             Console.WriteLine(cm.PayLoad);
+                            break;
                         }
 
-                        Thread.Sleep(1000);
-
                     } while (cm != null);
-
-
+                   
                 }
-                
                 
             }
             catch (ArgumentNullException ae)

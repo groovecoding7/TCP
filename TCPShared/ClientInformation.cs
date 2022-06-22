@@ -6,21 +6,20 @@ namespace TcpShared
     {
         public const String AckMessage = "<Ack>";
         public ClientIdentifier ClientIdentifier { get; set; }
-        public ClientState ClientState { get; set; }
-        public ClientInformation(ClientIdentifier client, ClientState clientState)
+        public MessageState ClientState { get; set; }
+        public ClientInformation(ClientIdentifier client, MessageState clientState)
         {
             ClientIdentifier = client;
             ClientState = clientState;
         }
-        public void Reply()
+        public void Reply(Message cm)
         {
-            ClientMessage cm = new ClientMessage();
-            
-            ClientState.SendData(cm.Create(AckMessage));
+            byte[] ackMsg = cm.Create(AckMessage);
+            ClientState.SendData(ackMsg);
         }
         public void Send(String message)
         {
-            ClientMessage cm = new ClientMessage();
+            Message cm = new Message();
 
             ClientState.SendData(cm.Create(message));
         }

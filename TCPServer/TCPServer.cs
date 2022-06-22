@@ -14,13 +14,12 @@ namespace TCPServer
     public class TcpServerHandler
     {
         private ManualResetEvent wManualResetEvent = new ManualResetEvent(false);
-
         public TcpServerHandler(string hostName1, int portNum1)
         {
             HostName = hostName1;
             PortNum = portNum1;
         }
-
+        public static int ReceivedConnectionCount = 0;
         public string HostName { get; set; }
         public int PortNum { get; set; }
 
@@ -30,8 +29,7 @@ namespace TCPServer
             bool result = true;
             try
             {
-                 
-               
+                
                 if (String.IsNullOrWhiteSpace(HostName))
                 {
                     HostName = Dns.GetHostName();
@@ -48,17 +46,19 @@ namespace TCPServer
 
                 while (true)
                 {
+
                     try
                     {
+
                         Console.Write("Waiting for connection...");
 
                         TcpClient client = listener.AcceptTcpClient();
 
-                        ClientState cs = new ClientState(client);
+                        MessageState cs = new MessageState(client);
 
-                        Console.WriteLine("Connection accepted.");
+                        Console.WriteLine($"Receiving connection # {++ReceivedConnectionCount} from client....");
 
-                        Task.Run(() => cs.ReceiveData());
+                        Task.Run(() => cs.ServerReceiveData());
 
                     }
                     catch (Exception e)
