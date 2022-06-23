@@ -76,7 +76,7 @@ namespace TCPClient
                             }
 
                         } while (cm != null);
-                        Thread.Sleep(5);
+                        Thread.Sleep(1);
                     }
 
                 }
