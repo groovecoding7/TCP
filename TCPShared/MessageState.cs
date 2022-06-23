@@ -16,7 +16,8 @@ namespace TcpShared
         public static IDictionary<String, ClientInformation> Connections =
             new ConcurrentDictionary<string, ClientInformation>();
 
-        public static int ReceivedMessageCount = 0;
+        public static DateTime StartedListening = DateTime.Now;
+        public static double ReceivedMessageCount = 0;
 
         public MessageState(TcpClient client)
         {
@@ -74,7 +75,7 @@ namespace TcpShared
                     {
                         offset = 0;
                         cm = new Message();
-                        Console.WriteLine($"Received message # {ReceivedMessageCount++}.");
+                        
                         ProcessReceivedMessage(this, ref cm);
                         WorkingBuffer.Clear();
                     }
@@ -120,6 +121,14 @@ namespace TcpShared
             {
                 result = false;
                 Console.WriteLine($"ProcessReceivedMessage: Error: {ex.ToString()}");
+            }
+
+            TimeSpan tsStarted = new TimeSpan(StartedListening.Ticks);
+            TimeSpan tsNow = new TimeSpan(DateTime.Now.Ticks);
+            double messagesPerSecond = (tsNow - tsStarted).TotalSeconds;
+            if ((++ReceivedMessageCount % 10000)==0)
+            {
+                Console.WriteLine($"Messages Per Second = {ReceivedMessageCount / messagesPerSecond}");
             }
             return result;
         }

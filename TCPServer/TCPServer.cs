@@ -56,8 +56,6 @@ namespace TCPServer
 
                         MessageState cs = new MessageState(client);
 
-                        Console.WriteLine($"Receiving connection # {++ReceivedConnectionCount} from client....");
-
                         Task.Run(() => cs.ServerReceiveData());
 
                     }

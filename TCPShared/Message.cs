@@ -64,7 +64,7 @@ namespace TcpShared
 
                     PayLoad = message.Substring(payLoadStartIdx, payLoadEndIdx - payLoadStartIdx);
                 }
-                Console.WriteLine($"Parsed: {this.ToString()}");
+              
             }
             catch (Exception ex)
             {

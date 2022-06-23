@@ -48,7 +48,7 @@ namespace TCPClient
             {
                 var client = new TcpClient(HostName, PortNum);
 
-                for (int messageIdx = 0; messageIdx < 1000000; messageIdx++)
+                for (int messageIdx = 0; messageIdx < int.MaxValue; messageIdx++)
                 {
                     String message  = $"This is message # {messageIdx}.";
 
@@ -60,8 +60,6 @@ namespace TCPClient
 
                     buffer = sm.Create(message);
 
-                    Console.WriteLine($"Sending message # {messageIdx} to the server: {message}");
-
                     cs.SendData(buffer);
 
                     Message cm = null;
@@ -70,7 +68,6 @@ namespace TCPClient
                         cm = cs.ClientReceiveData();
                         if (cm != null)
                         {
-                            Console.WriteLine(cm.PayLoad);
                             break;
                         }
 
