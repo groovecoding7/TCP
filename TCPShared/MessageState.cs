@@ -22,8 +22,12 @@ namespace TcpShared
         public MessageState(TcpClient client)
         {
             WorkingBuffer = new StringBuilder();
+            ClientId = Guid.NewGuid().ToString();
             Client = client;
         }
+      
+        public String Message => WorkingBuffer.ToString();
+        public bool HasData => WorkingBuffer.Length > 0;
         public Message ClientReceiveData()
         {
             byte[] buffer = new byte[MessageState.BufferSize];
@@ -33,11 +37,10 @@ namespace TcpShared
             int read = 0;
             do
             {
-               
+
                 read = ns.Read(buffer, offset, BufferSize);
                 if (read > 0)
                 {
-                   
                     String bufferToString = Encoding.UTF8.GetString(buffer, offset, read);
                     WorkingBuffer.Append(bufferToString);
                     offset += read;
@@ -45,13 +48,16 @@ namespace TcpShared
                     {
                         offset = 0;
                         cm = new Message();
-                        ProcessReceivedMessage(this, ref cm);
+                        if (cm.TryParse(Message))
+                        {
+                            ProcessReceivedMessage(cm);
+                        }
                         break;
                     }
-                    
+
                 }
 
-            } while (read>0);
+            } while (read > 0);
             return cm;
         }
         public Message ServerReceiveData()
@@ -75,8 +81,12 @@ namespace TcpShared
                     {
                         offset = 0;
                         cm = new Message();
-                        
-                        ProcessReceivedMessage(this, ref cm);
+                        if (cm.TryParse(Message))
+                        {
+                            ProcessReceivedMessage(cm);
+                            CalculateMessageRate();
+
+                        }
                         WorkingBuffer.Clear();
                     }
 
@@ -85,36 +95,29 @@ namespace TcpShared
             } while (read > 0);
             return cm;
         }
-        public String Message => WorkingBuffer.ToString();
-        public bool HasData => WorkingBuffer.Length > 0;
-        private StringBuilder WorkingBuffer { get; }
+        public String ClientId { get; set; }
         public TcpClient Client { get; set; }
         public void SendData(byte[] data)
         {
             NetworkStream ns = Client.GetStream();
             ns.Write(data, 0, data.Length);
         }
-        public static bool ProcessReceivedMessage(MessageState message, ref Message cm)
+        public bool ProcessReceivedMessage(Message cm)
         {
             bool result = true;
             try
             {
-
-                if (cm.Parse(message))
+                if (cm.HasClientId && Connections.ContainsKey(cm.ClientId))
                 {
-
-                    if (cm.HasClientId && Connections.ContainsKey(cm.ClientId))
-                    {
-                        ClientInformation ci = Connections[cm.ClientId];
-                        ci.Reply(cm);
-                    }
-                    else
-                    {
-                        ClientIdentifier clientIdentifier = new ClientIdentifier(cm.ClientId);
-                        ClientInformation ci = new ClientInformation(clientIdentifier, message);
-                        Connections.Add(clientIdentifier.Id, ci);
-                        ci.Reply(cm);
-                    }
+                    ClientInformation ci = Connections[cm.ClientId];
+                    ci.Reply(cm);
+                }
+                else
+                {
+                    ClientIdentifier clientIdentifier = new ClientIdentifier(cm.ClientId);
+                    ClientInformation ci = new ClientInformation(clientIdentifier, this);
+                    Connections.Add(clientIdentifier.Id, ci);
+                    ci.Reply(cm);
                 }
             }
             catch (Exception ex)
@@ -122,18 +125,20 @@ namespace TcpShared
                 result = false;
                 Console.WriteLine($"ProcessReceivedMessage: Error: {ex.ToString()}");
             }
+            return result;
+        }
 
-           
-            if ((++ReceivedMessageCount % 100)==0)
+        private void CalculateMessageRate()
+        {
+            if ((++ReceivedMessageCount % 100) == 0)
             {
                 TimeSpan tsStarted = new TimeSpan(StartedListening.Ticks);
                 TimeSpan tsNow = new TimeSpan(DateTime.Now.Ticks);
                 double messagesPerSecond = (tsNow - tsStarted).TotalSeconds;
                 Console.WriteLine($"Messages Per Second = {ReceivedMessageCount / messagesPerSecond}");
             }
-            return result;
         }
-
+        private StringBuilder WorkingBuffer { get; }
     }
 
 }

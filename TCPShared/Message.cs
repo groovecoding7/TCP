@@ -8,7 +8,7 @@ namespace TcpShared
 {
     public interface IMessage
     {
-        bool Parse(MessageState clientState);
+        bool TryParse(String message);
         String ClientId { get; set; }
         String PayLoad { get; set; }
         bool HasClientId { get; }
@@ -25,42 +25,45 @@ namespace TcpShared
         public const String MessageEnd = "</ClientMessage>";
         public const String PayLoadStart = "<Payload>";
         public const String PayLoadEnd = "</Payload>";
-        
+
+        public Message()
+        {
+        }
+        public Message(String clientId)
+        {
+            ClientId = clientId;
+        }
         public String ClientId { get; set; }
         public String PayLoad { get; set; }
         public byte[] Create(String message)
         {
             byte[] buffer = new byte[message.Length + MessageTemplate.Length];
-            if (String.IsNullOrWhiteSpace(ClientId))
-            {
-                ClientIdentifier ci = new ClientIdentifier();
-                ClientId = ci.Id;
-            }
+
             PayLoad = message;
             String fullMessage = $"{MessageStart}{ClientIdentifierStart}{ClientId}{ClientIdentifierEnd}{PayLoadStart}{message}{PayLoadEnd}{MessageEnd}";
             return System.Text.Encoding.UTF8.GetBytes(fullMessage);
         }
-        public bool Parse(MessageState clientState)
+        public bool TryParse(String message)
         {
+           
             int startMessageIdx = -1;
             int endMessageIdx = -1;
             try
             {
                 
-                String message = clientState.Message;
-
                 startMessageIdx = message.IndexOf(MessageStart);
-                endMessageIdx = message.IndexOf(MessageEnd);
-
+                
                 if (startMessageIdx > -1)
                 {
+                    endMessageIdx = message.IndexOf(MessageEnd, startMessageIdx);
+
                     int clientIdStartIdx = startMessageIdx + MessageStart.Length + ClientIdentifierStart.Length;
-                    int clientIdEndIdx = message.IndexOf(ClientIdentifierEnd);
+                    int clientIdEndIdx = message.IndexOf(ClientIdentifierEnd, clientIdStartIdx);
 
                     ClientId = message.Substring(clientIdStartIdx, clientIdEndIdx - clientIdStartIdx);
 
                     int payLoadStartIdx = clientIdEndIdx + ClientIdentifierEnd.Length + PayLoadStart.Length;
-                    int payLoadEndIdx = message.IndexOf(PayLoadEnd);
+                    int payLoadEndIdx = message.IndexOf(PayLoadEnd, payLoadStartIdx);
 
                     PayLoad = message.Substring(payLoadStartIdx, payLoadEndIdx - payLoadStartIdx);
                 }
@@ -70,7 +73,8 @@ namespace TcpShared
             {
                 Console.WriteLine(ex.ToString());
             }
-            return ClientId.Length >0 && PayLoad.Length > 0;
+
+            return ClientId != null && PayLoad != null;
         }
         public bool HasClientId => String.IsNullOrWhiteSpace(ClientId) == false;
         public bool HasPayLoad => String.IsNullOrWhiteSpace(PayLoad) == false;

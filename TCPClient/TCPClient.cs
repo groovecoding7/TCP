@@ -42,8 +42,6 @@ namespace TCPClient
                 PortNum = 11000;
             }
 
-            Thread.Sleep(3000);
-
             try 
             {
 
@@ -60,7 +58,7 @@ namespace TCPClient
 
                         byte[] buffer = new byte[MessageState.BufferSize];
 
-                        Message sm = new Message();
+                        Message sm = new Message(cs.ClientId);
 
                         buffer = sm.Create(message);
 
