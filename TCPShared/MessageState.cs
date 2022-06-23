@@ -124,7 +124,7 @@ namespace TcpShared
             }
 
            
-            if ((++ReceivedMessageCount % 10000)==0)
+            if ((++ReceivedMessageCount % 100)==0)
             {
                 TimeSpan tsStarted = new TimeSpan(StartedListening.Ticks);
                 TimeSpan tsNow = new TimeSpan(DateTime.Now.Ticks);

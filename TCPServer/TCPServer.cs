@@ -50,11 +50,11 @@ namespace TCPServer
                     try
                     {
 
-                        Console.Write("Waiting for connection...");
+                        Console.WriteLine("Waiting for connection...");
 
                         TcpClient client = listener.AcceptTcpClient();
 
-                        Console.Write($"Accepting connection # {++ReceivedConnectionCount}...");
+                        Console.WriteLine($"Accepting connection # {++ReceivedConnectionCount}...");
 
                         MessageState cs = new MessageState(client);
 

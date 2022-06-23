@@ -51,9 +51,10 @@ namespace TCPClient
 
                 using (client)
                 {
-                    for (int messageIdx = 0; messageIdx < int.MaxValue; messageIdx++)
+                    int messageIdx = 0;
+                    while (true)
                     {
-                        String message = $"This is message # {messageIdx}.";
+                        String message = $"This is message # {++messageIdx}.";
 
                         MessageState cs = new MessageState(client);
 
@@ -75,7 +76,7 @@ namespace TCPClient
                             }
 
                         } while (cm != null);
-                        Thread.Sleep(100);
+                        Thread.Sleep(5);
                     }
 
                 }
