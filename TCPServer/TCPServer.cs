@@ -54,6 +54,8 @@ namespace TCPServer
 
                         TcpClient client = listener.AcceptTcpClient();
 
+                        Console.Write($"Accepting connection # {++ReceivedConnectionCount}...");
+
                         MessageState cs = new MessageState(client);
 
                         Task.Run(() => cs.ServerReceiveData());

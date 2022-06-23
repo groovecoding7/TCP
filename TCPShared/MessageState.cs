@@ -123,15 +123,17 @@ namespace TcpShared
                 Console.WriteLine($"ProcessReceivedMessage: Error: {ex.ToString()}");
             }
 
-            TimeSpan tsStarted = new TimeSpan(StartedListening.Ticks);
-            TimeSpan tsNow = new TimeSpan(DateTime.Now.Ticks);
-            double messagesPerSecond = (tsNow - tsStarted).TotalSeconds;
+           
             if ((++ReceivedMessageCount % 10000)==0)
             {
+                TimeSpan tsStarted = new TimeSpan(StartedListening.Ticks);
+                TimeSpan tsNow = new TimeSpan(DateTime.Now.Ticks);
+                double messagesPerSecond = (tsNow - tsStarted).TotalSeconds;
                 Console.WriteLine($"Messages Per Second = {ReceivedMessageCount / messagesPerSecond}");
             }
             return result;
         }
+
     }
 
 }

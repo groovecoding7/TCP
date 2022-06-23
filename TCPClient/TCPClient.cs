@@ -46,33 +46,38 @@ namespace TCPClient
 
             try 
             {
+
                 var client = new TcpClient(HostName, PortNum);
 
-                for (int messageIdx = 0; messageIdx < int.MaxValue; messageIdx++)
+                using (client)
                 {
-                    String message  = $"This is message # {messageIdx}.";
-
-                    MessageState cs = new MessageState(client);
-
-                    byte[] buffer = new byte[MessageState.BufferSize];
-
-                    Message sm = new Message();
-
-                    buffer = sm.Create(message);
-
-                    cs.SendData(buffer);
-
-                    Message cm = null;
-                    do
+                    for (int messageIdx = 0; messageIdx < int.MaxValue; messageIdx++)
                     {
-                        cm = cs.ClientReceiveData();
-                        if (cm != null)
-                        {
-                            break;
-                        }
+                        String message = $"This is message # {messageIdx}.";
 
-                    } while (cm != null);
-                   
+                        MessageState cs = new MessageState(client);
+
+                        byte[] buffer = new byte[MessageState.BufferSize];
+
+                        Message sm = new Message();
+
+                        buffer = sm.Create(message);
+
+                        cs.SendData(buffer);
+
+                        Message cm = null;
+                        do
+                        {
+                            cm = cs.ClientReceiveData();
+                            if (cm != null)
+                            {
+                                break;
+                            }
+
+                        } while (cm != null);
+                        Thread.Sleep(100);
+                    }
+
                 }
                 
             }
@@ -89,6 +94,7 @@ namespace TCPClient
                 Console.WriteLine("Unexpected exception : {0}", e.ToString());
             }
 
+            Console.WriteLine($"Successfully sent {int.MaxValue} messages.");
             return result;
         }
 
